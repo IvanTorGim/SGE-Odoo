@@ -1,18 +1,39 @@
 # -*- coding: utf-8 -*-
 
-# from odoo import models, fields, api
+from odoo import models, fields, api
 
 
-# class interstellar(models.Model):
-#     _name = 'interstellar.interstellar'
-#     _description = 'interstellar.interstellar'
+class player(models.Model):
+    _name = 'interstellar.player'
+    _description = 'Jugador de Interstellar'
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100
+    name = fields.Char(string='Nombre')
+    spaceships = fields.One2many(comodel_name='interstellar.spaceship', inverse_name='player')
+
+
+class planet(models.Model):
+    _name = 'interstellar.planet'
+    _description = 'Planeta'
+
+    name = fields.Char(string='Planeta')
+
+    precious_minerals = fields.Integer(default=100)
+    food = fields.Integer(default=500)
+    construction_materials = fields.Integer(default=500)
+
+
+class spaceship(models.Model):
+    _name = 'interstellar.spaceship'
+    _description = 'Nave'
+
+    name = fields.Char(string='Nombre')
+    player = fields.Many2one(comodel_name='interstellar.player', required=True)
+    weapons = fields.Many2many('interstellar.weapon')
+
+
+class weapon(models.Model):
+    _name = 'interstellar.weapon'
+    _description = 'Arma'
+
+    name = fields.Char(string='Nombre')
+    spaceships = fields.Many2many('interstellar.spaceship')

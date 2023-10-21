@@ -1,60 +1,73 @@
 <odoo>
-  <data>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="interstellar.list">
-      <field name="name">interstellar list</field>
-      <field name="model">interstellar.interstellar</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
--->
+    <data>
+        <!-- explicit list view definition -->
+        <!--
+            <record model="ir.ui.view" id="interstellar.list">
+              <field name="name">interstellar list</field>
+              <field name="model">interstellar.interstellar</field>
+              <field name="arch" type="xml">
+                <tree>
+                  <field name="name"/>
+                  <field name="value"/>
+                  <field name="value2"/>
+                </tree>
+              </field>
+            </record>
+        -->
 
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="interstellar.action_window">
-      <field name="name">interstellar window</field>
-      <field name="res_model">interstellar.interstellar</field>
-      <field name="view_mode">tree,form</field>
-    </record>
--->
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="interstellar.action_player_window">
+            <field name="name">Jugador</field>
+            <field name="res_model">interstellar.player</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="interstellar.action_spaceship_window">
+            <field name="name">Naves</field>
+            <field name="res_model">interstellar.spaceship</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="interstellar.action_weapon_window">
+            <field name="name">Armas</field>
+            <field name="res_model">interstellar.weapon</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="interstellar.action_planet_window">
+            <field name="name">Planetas</field>
+            <field name="res_model">interstellar.planet</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="interstellar.action_server">
-      <field name="name">interstellar server</field>
-      <field name="model_id" ref="model_interstellar_interstellar"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
-      </field>
-    </record>
--->
+        <!-- server action to the one above -->
+        <!--
+            <record model="ir.actions.server" id="interstellar.action_server">
+              <field name="name">interstellar server</field>
+              <field name="model_id" ref="model_interstellar_interstellar"/>
+              <field name="state">code</field>
+              <field name="code">
+                action = {
+                  "type": "ir.actions.act_window",
+                  "view_mode": "tree,form",
+                  "res_model": model._name,
+                }
+              </field>
+            </record>
+        -->
 
-    <!-- Top menu item -->
-<!--
-    <menuitem name="interstellar" id="interstellar.menu_root"/>
--->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="interstellar.menu_1" parent="interstellar.menu_root"/>
-    <menuitem name="Menu 2" id="interstellar.menu_2" parent="interstellar.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="interstellar.menu_1_list" parent="interstellar.menu_1"
-              action="interstellar.action_window"/>
-    <menuitem name="Server to list" id="interstellar" parent="interstellar.menu_2"
-              action="interstellar.action_server"/>
--->
-  </data>
+        <!-- Top menu item -->
+        <menuitem name="Interstellar" id="interstellar.menu_root"/>
+
+        <!-- menu categories -->
+        <menuitem name="Juego" id="interstellar.menu_game" parent="interstellar.menu_root"/>
+
+        <!-- actions -->
+        <menuitem name="Jugador" id="interstellar.player_list" parent="interstellar.menu_root"
+                  action="interstellar.action_player_window"/>
+        <menuitem name="Naves" id="interstellar.spaceship_list" parent="interstellar.menu_game"
+                  action="interstellar.action_spaceship_window"/>
+        <menuitem name="Armas" id="interstellar.weapon_list" parent="interstellar.menu_game"
+                  action="interstellar.action_weapon_window"/>
+        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
+                  action="interstellar.action_planet_window"/>
+        -->
+    </data>
 </odoo>

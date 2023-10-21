@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_interstellar_interstellar,interstellar.interstellar,model_interstellar_interstellar,base.group_user,1,1,1,1
+access_interstellar_player,interstellar.player,model_interstellar_player,base.group_user,1,1,1,1
+access_interstellar_spaceship,interstellar.spaceship,model_interstellar_spaceship,base.group_user,1,1,1,1
+access_interstellar_weapon,interstellar.weapon,model_interstellar_weapon,base.group_user,1,1,1,1
+access_interstellar_planet,interstellar.planet,model_interstellar_planet,base.group_user,1,1,1,1
