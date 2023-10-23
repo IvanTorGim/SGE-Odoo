@@ -8,18 +8,29 @@ class player(models.Model):
     _description = 'Jugador de Interstellar'
 
     name = fields.Char(string='Nombre')
-    spaceships = fields.One2many(comodel_name='interstellar.spaceship', inverse_name='player')
 
 
 class planet(models.Model):
     _name = 'interstellar.planet'
     _description = 'Planeta'
 
-    name = fields.Char(string='Planeta')
+    name = fields.Char(string='Nombre')
+    description = fields.Text(string='Descripción')
+    dimension = fields.Integer(string='Dimension', help='Dimension del planeta en kilómetros')
+    race = fields.Char(string='Raza')
+    age = fields.Integer(string='Edad', )
 
-    precious_minerals = fields.Integer(default=100)
-    food = fields.Integer(default=500)
-    construction_materials = fields.Integer(default=500)
+    precious_minerals = fields.Integer(default=100, string='Minerales preciosos')
+    energy = fields.Integer(default=500, string='Energía')
+    construction_materials = fields.Integer(default=500, string='Materiales de construcción')
+
+    spaceships = fields.Many2many(
+        string='Naves',
+        comodel_name='interstellar.spaceship',
+        relation='planet_spaceship_rel',
+        column1='planet_id',
+        column2='spaceship_id'
+    )
 
 
 class spaceship(models.Model):
@@ -27,8 +38,19 @@ class spaceship(models.Model):
     _description = 'Nave'
 
     name = fields.Char(string='Nombre')
-    player = fields.Many2one(comodel_name='interstellar.player', required=True)
-    weapons = fields.Many2many('interstellar.weapon')
+
+    planets = fields.Many2many(
+        comodel_name='interstellar.planet',
+        relation='planet_spaceship_rel',
+        column1='spaceship_id',
+        column2='planet_id'
+    )
+    weapons = fields.Many2many(
+        comodel_name='interstellar.weapon',
+        relation='spaceship_weapon_rel',
+        column1='spaceship_id',
+        column2='weapon_id'
+    )
 
 
 class weapon(models.Model):
@@ -36,4 +58,9 @@ class weapon(models.Model):
     _description = 'Arma'
 
     name = fields.Char(string='Nombre')
-    spaceships = fields.Many2many('interstellar.spaceship')
+    spaceships = fields.Many2many(
+        comodel_name='interstellar.spaceship',
+        relation='spaceship_weapon_rel',
+        column1='weapon_id',
+        column2='spaceship_id'
+    )
