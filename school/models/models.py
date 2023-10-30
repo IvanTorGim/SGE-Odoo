@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 import secrets
 import logging
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -13,20 +15,26 @@ class student(models.Model):
 
     name = fields.Char(string='nombre', required=True, help='Esto es el nombre')
     birth_year = fields.Integer(string='cumpleaños', readonly=False)
-    password = fields.Char(compute='_get_password')
+    password = fields.Char(default=lambda s: secrets.token_urlsafe(12))
+    dni = fields.Char(string='DNI')
     description = fields.Text()
-    enrollment_date = fields.Date()
+    enrollment_date = fields.Datetime(default=lambda self: fields.Datetime.now())
     last_login = fields.Datetime()
     is_student = fields.Boolean()
     photo = fields.Image(max_width=200, max_height=200)
     classroom = fields.Many2one(comodel_name='school.classroom')
     teachers = fields.Many2many('school.teacher', related='classroom.teachers', readonly=True)
 
-    def _get_password(self):
-        _logger.info('\033[94m' + str(self) + '\033[0m')
-        for student in self:
-            _logger.info('\033[94m' + str(student) + '\033[0m')
-            student.password = secrets.token_urlsafe(12)
+    @api.constrains('dni')
+    def _check_dni(self):
+        regex = re.compile('[0-9]{8}[a-z]\Z', re.IGNORECASE)
+        for s in self:
+            if regex.match(s.dni):
+                _logger.info('El dni hace match')
+            else:
+                raise ValidationError('El DNI no vale')
+
+    _sql_constraints = [('dni_uniq', 'unique(dni)', 'El DNI no se puede repetir')]
 
 
 class classroom(models.Model):
@@ -55,6 +63,7 @@ class classroom(models.Model):
     def _get_teachers(self):
         for t in self:
             t.all_teachers = t.teachers + t.teachers_ly
+
 
 class teacher(models.Model):
     _name = "school.teacher"
