@@ -30,7 +30,7 @@ class student(models.Model):
         regex = re.compile('[0-9]{8}[a-z]\Z', re.IGNORECASE)
         for s in self:
             if regex.match(s.dni):
-                _logger.info('El dni hace match')
+                _logger.warning('El dni hace match')
             else:
                 raise ValidationError('El DNI no vale')
 

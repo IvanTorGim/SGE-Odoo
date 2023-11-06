@@ -1,19 +1,34 @@
 <odoo>
     <data>
         <!-- explicit list view definition -->
-        <!--
-            <record model="ir.ui.view" id="interstellar.list">
-              <field name="name">interstellar list</field>
-              <field name="model">interstellar.interstellar</field>
-              <field name="arch" type="xml">
+        <record model="ir.ui.view" id="interstellar.list">
+            <field name="name">interstellar player list</field>
+            <field name="model">interstellar.player</field>
+            <field name="arch" type="xml">
                 <tree>
-                  <field name="name"/>
-                  <field name="value"/>
-                  <field name="value2"/>
+                    <field name="name"/>
+                    <field name="age"/>
+                    <field name="total_planets"/>
+                    <field name="planets" widget="many2many_tags"/>
                 </tree>
-              </field>
-            </record>
-        -->
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.list">
+            <field name="name">interstellar planet list</field>
+            <field name="model">interstellar.planet</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="player"/>
+                    <field name="race"/>
+                    <field name="age"/>
+                    <field name="minerals"/>
+                    <field name="construction_materials"/>
+                    <field name="health"/>
+                </tree>
+            </field>
+        </record>
 
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="interstellar.action_player_window">

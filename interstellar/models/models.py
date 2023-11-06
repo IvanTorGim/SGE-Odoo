@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from datetime import date
+
 from odoo import models, fields, api
 
 
@@ -8,7 +10,25 @@ class player(models.Model):
     _description = 'Jugador de Interstellar'
 
     name = fields.Char(string='Nombre')
-    birthdate = fields.Date(string='Fecha de nacimiento')
+    birth_date = fields.Date(string='Fecha de nacimiento')
+    age = fields.Integer(string='Edad', compute='_get_age')
+    @api.depends('birth_date')
+    def _get_age(self):
+        for item in self:
+            today = date.today()
+            if item.birth_date:
+                item.age = today.year - item.birth_date.year
+            else:
+                item.age = 1
+
+    total_planets = fields.Integer(string='Total de planetas', compute='_get_total_planets')
+    @api.depends('planets')
+    def _get_total_planets(self):
+        for player in self:
+            total = 0
+            for planet in player.planets:
+                total += 1
+            player.total_planets = total
 
     planets = fields.One2many(
         string='Planetas',
@@ -26,10 +46,16 @@ class planet(models.Model):
     dimension = fields.Integer(string='Dimension', help='Dimension del planeta en kilómetros')
     race = fields.Char(string='Raza')
     age = fields.Integer(string='Edad', )
-
     minerals = fields.Integer(default=100, string='Minerales')
-    energy = fields.Integer(default=500, string='Energía')
     construction_materials = fields.Integer(default=500, string='Materiales de construcción')
+    health = fields.Integer(string='Salud', compute='_get_energy')
+    @api.depends('spaceships')
+    def _get_energy(self):
+        for planet in self:
+            health = 500
+            for spaceship in planet.spaceships:
+                health += spaceship.health
+            planet.health = health
 
     player = fields.Many2one(
         string='Jugador',
