@@ -5,13 +5,87 @@
             <field name="name">school student list</field>
             <field name="model">school.student</field>
             <field name="arch" type="xml">
-                <tree decoration-warning="birth_year&lt;2000" >
+                <tree>
                     <field name="name"/>
-                    <field name="birth_year" sum="Total" />
-                    <field name="password" />
+                    <field name="birth_year" sum="Total"/>
+                    <field name="password"/>
+                    <field name="gender" />
                 </tree>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="school.student_search">
+            <field name="name">school student search</field>
+            <field name="model">school.student</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="password"/>
+                    <field name="birth_year"/>
+                    <!-- Filtrar por un campo personalizado -->
+                    <field name="birth_year" string="Min year" filter_domain="[('birth_year', '&gt;=', self)]"/>
+                    <filter name="male" string="Hombre" domain="[('gender', '=', 'male')]" />
+                    <filter name="female" string="Mujer" domain="[('gender', '=', 'female')]" />
+                    <filter name="other" string="Otro" domain="[('gender', '=', 'other')]" />
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="school.student_form">
+            <field name="name">school student form</field>
+            <field name="model">school.student</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="regenerate_password" type="object" string="Regenerate Password" icon="fa-star-o"/>
+                    </header>
+                    <sheet>
+                        <field name="photo" widget="image"/>
+                        <group>
+                            <group>
+                                <separator string="Personal Data"/>
+                                <field name="name"/>
+                                <field name="birth_year" sum="Total"/>
+                                <field name="password"/>
+                                <field name="gender"/>
+                                <field name="description"/>
+                            </group>
+                            <group>
+                                <separator string="Enrollment Data"/>
+                                <field name="enrollment_date"/>
+                                <field name="last_login"/>
+                                <field name="is_student"/>
+                                <field name="classroom"/>
+                                <field name="level"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Teachers">
+                                <field name="teachers">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="topic"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="school.teacher_list">
+            <field name="name">school teacher list</field>
+            <field name="model">school.teacher</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="topic"/>
+                    <field name="phone"/>
+                </tree>
+            </field>
+        </record>
+
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="school.action_student_window">
             <field name="name">school student window</field>

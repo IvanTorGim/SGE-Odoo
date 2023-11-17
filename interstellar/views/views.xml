@@ -1,32 +1,261 @@
 <odoo>
     <data>
         <!-- explicit list view definition -->
-        <record model="ir.ui.view" id="interstellar.list">
+        <!-- player TODO -->
+        <record model="ir.ui.view" id="interstellar.player_tree">
             <field name="name">interstellar player list</field>
             <field name="model">interstellar.player</field>
             <field name="arch" type="xml">
                 <tree>
+                    <field name="photo_mini" widget="image"/>
                     <field name="name"/>
                     <field name="age"/>
-                    <field name="total_planets"/>
+                    <field name="gender"/>
                     <field name="planets" widget="many2many_tags"/>
+                    <field name="attack"/>
+                    <field name="defense"/>
+                    <field name="health"/>
                 </tree>
             </field>
         </record>
 
-        <record model="ir.ui.view" id="interstellar.list">
+        <record model="ir.ui.view" id="interstellar.player_form">
+            <field name="name">interstellar player form</field>
+            <field name="model">interstellar.player</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <separator string="Datos personales"/>
+                                <field name="name"/>
+                                <field name="last_name"/>
+                                <field name="birth_date"/>
+                                <field name="age"/>
+                                <field name="gender"/>
+                            </group>
+                            <field name="photo" widget="image" class="oe_right"/>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <group>
+                            <separator string="Datos del juego"/>
+                            <group>
+                                <field name="attack"/>
+                                <field name="defense"/>
+                            </group>
+                            <group>
+                                <field name="health"/>
+                                <field name="total_planets"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <separator string="Planetas"/>
+                        <field name="planets"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- planet TODO-->
+        <record model="ir.ui.view" id="interstellar.planet_tree">
             <field name="name">interstellar planet list</field>
             <field name="model">interstellar.planet</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
+                    <field name="photo_mini" widget="image"/>
                     <field name="player"/>
                     <field name="race"/>
-                    <field name="age"/>
                     <field name="minerals"/>
-                    <field name="construction_materials"/>
+                    <field name="materials"/>
+                    <field name="attack"/>
+                    <field name="defense"/>
                     <field name="health"/>
                 </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="interstellar.planet_form">
+            <field name="name">interstellar planet form</field>
+            <field name="model">interstellar.planet</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <separator string="Información del planeta"/>
+                                <field name="name"/>
+                                <field name="description"/>
+                                <field name="dimension"/>
+                                <field name="race"/>
+                                <field name="age"/>
+                                <field name="player"/>
+                            </group>
+                            <field name="photo" widget="image" class="oe_right"/>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <group>
+                            <separator string="Estadísticas"/>
+                            <group>
+                                <field name="minerals"/>
+                                <field name="materials"/>
+                                <field name="health"/>
+                            </group>
+                            <group>
+                                <field name="attack"/>
+                                <field name="defense"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <group>
+                            <separator string="Flota"/>
+                            <field name="spaceships"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- planet_spaceship TODO-->
+        <record model="ir.ui.view" id="interstellar.planet_spaceship_tree">
+            <field name="name">interstellar planet_spaceship list</field>
+            <field name="model">interstellar.planet_spaceship</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="spaceship"/>
+                    <field name="weapon_one"/>
+                    <field name="weapon_two"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="interstellar.planet_spaceship_form">
+            <field name="name">interstellar planet_spaceship form</field>
+            <field name="model">interstellar.planet_spaceship</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <!-- TODO FALTA ELIMINAR LA IMAGEN SI NO HAY NADA SELECCIONADO OCUPA MUCHO-->
+                            <group>
+                                <field name="spaceship"/>
+                            </group>
+                            <field name="image_spaceship" widget="image" class="oe_right"/>
+                            <group>
+                                <field name="weapon_one"/>
+                            </group>
+                            <field name="image_weapon_one" widget="image" class="oe_right"/>
+                            <group>
+                                <field name="weapon_two"/>
+                            </group>
+                            <field name="image_weapon_two" widget="image" class="oe_right"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- spaceship TODO-->
+        <record model="ir.ui.view" id="interstellar.spaceship_tree">
+            <field name="name">interstellar spaceship list</field>
+            <field name="model">interstellar.spaceship</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="photo_mini" widget="image"/>
+                    <field name="attack"/>
+                    <field name="defense"/>
+                    <field name="health"/>
+                    <field name="mineral_cost"/>
+                    <field name="material_cost"/>
+                    <field name="mineral_collection"/>
+                    <field name="material_collection"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.spaceship_form">
+            <field name="name">interstellar spaceship form</field>
+            <field name="model">interstellar.spaceship</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <separator string="Información"/>
+                            <group>
+                                <field name="name"/>
+                                <field name="description"/>
+                            </group>
+                            <field name="photo" widget="image" class="oe_right"/>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <group>
+                            <separator string="Estadísticas"/>
+                            <group>
+                                <field name="attack"/>
+                                <field name="defense"/>
+                                <field name="health"/>
+                            </group>
+                            <group>
+                                <field name="mineral_cost"/>
+                                <field name="material_cost"/>
+                                <field name="mineral_collection"/>
+                                <field name="material_collection"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- weapon TODO-->
+        <record model="ir.ui.view" id="interstellar.weapon_tree">
+            <field name="name">interstellar weapon list</field>
+            <field name="model">interstellar.weapon</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="photo_mini" widget="image"/>
+                    <field name="attack"/>
+                    <field name="defense"/>
+                    <field name="health"/>
+                    <field name="reload"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.weapon_form">
+            <field name="name">interstellar weapons form</field>
+            <field name="model">interstellar.weapon</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <separator string="Información"/>
+                            <group>
+                                <field name="name"/>
+                                <field name="description"/>
+                            </group>
+                            <field name="photo" widget="image" class="oe_right"/>
+                        </group>
+                    </sheet>
+                    <sheet>
+                        <group>
+                            <separator string="Estadísticas"/>
+                            <group>
+                                <field name="attack"/>
+                                <field name="defense"/>
+                            </group>
+                            <group>
+                                <field name="health"/>
+                                <field name="reload"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
             </field>
         </record>
 
@@ -34,6 +263,11 @@
         <record model="ir.actions.act_window" id="interstellar.action_player_window">
             <field name="name">Jugador</field>
             <field name="res_model">interstellar.player</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="interstellar.action_planet_window">
+            <field name="name">Planetas</field>
+            <field name="res_model">interstellar.planet</field>
             <field name="view_mode">tree,form</field>
         </record>
         <record model="ir.actions.act_window" id="interstellar.action_spaceship_window">
@@ -44,11 +278,6 @@
         <record model="ir.actions.act_window" id="interstellar.action_weapon_window">
             <field name="name">Armas</field>
             <field name="res_model">interstellar.weapon</field>
-            <field name="view_mode">tree,form</field>
-        </record>
-        <record model="ir.actions.act_window" id="interstellar.action_planet_window">
-            <field name="name">Planetas</field>
-            <field name="res_model">interstellar.planet</field>
             <field name="view_mode">tree,form</field>
         </record>
 
@@ -75,14 +304,13 @@
         <menuitem name="Juego" id="interstellar.menu_game" parent="interstellar.menu_root"/>
 
         <!-- actions -->
-        <menuitem name="Jugador" id="interstellar.player_list" parent="interstellar.menu_root"
+        <menuitem name="Jugador" id="interstellar.player_list" parent="interstellar.menu_game"
                   action="interstellar.action_player_window"/>
+        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
+                  action="interstellar.action_planet_window"/>
         <menuitem name="Naves" id="interstellar.spaceship_list" parent="interstellar.menu_game"
                   action="interstellar.action_spaceship_window"/>
         <menuitem name="Armas" id="interstellar.weapon_list" parent="interstellar.menu_game"
                   action="interstellar.action_weapon_window"/>
-        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
-                  action="interstellar.action_planet_window"/>
-        -->
     </data>
 </odoo>

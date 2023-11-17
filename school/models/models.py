@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from odoo.exceptions import ValidationError
-import secrets
 import logging
 import re
+import secrets
+
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -15,14 +16,17 @@ class student(models.Model):
 
     name = fields.Char(string='nombre', required=True, help='Esto es el nombre')
     birth_year = fields.Integer(string='cumpleaños', readonly=False)
+    gender = fields.Selection([('male', 'Hombre'), ('female', 'Mujer'), ('other', 'Otro')],string='genero', default='male')
     password = fields.Char(default=lambda s: secrets.token_urlsafe(12))
     dni = fields.Char(string='DNI')
     description = fields.Text()
     enrollment_date = fields.Datetime(default=lambda self: fields.Datetime.now())
     last_login = fields.Datetime()
+    level = fields.Selection([('1', '1'), ('2', '2')])
     is_student = fields.Boolean()
     photo = fields.Image(max_width=200, max_height=200)
-    classroom = fields.Many2one(comodel_name='school.classroom')
+    classroom = fields.Many2one(comodel_name='school.classroom', domain='[("level", "=", level)]', ondelete='set null',
+                                help='La clase a la que va')
     teachers = fields.Many2many('school.teacher', related='classroom.teachers', readonly=True)
 
     @api.constrains('dni')
@@ -36,12 +40,18 @@ class student(models.Model):
 
     _sql_constraints = [('dni_uniq', 'unique(dni)', 'El DNI no se puede repetir')]
 
+    def regenerate_password(self):
+        for s in self:
+            password = secrets.token_urlsafe(12)
+            s.write({'password': password})
+
 
 class classroom(models.Model):
     _name = 'school.classroom'
     _description = "school.classroom"
 
     name = fields.Char()
+    level = fields.Selection([('1', '1'), ('2', '2')])
     students = fields.One2many(comodel_name='school.student', inverse_name='classroom')
     teachers = fields.Many2many(comodel_name='school.teacher',
                                 relation='teacher_classroom',
@@ -53,12 +63,7 @@ class classroom(models.Model):
                                    column1='teacher_id',
                                    column2='classroom_id')
 
-    delegate = fields.Many2one('school.student', compute='_get_delegate')
     all_teachers = fields.Many2many('school.teacher', compute='_get_teachers')
-
-    def _get_delegate(self):
-        for s in self:
-            s.delegate = s.students[0].id
 
     def _get_teachers(self):
         for t in self:
@@ -70,6 +75,8 @@ class teacher(models.Model):
     _description = "school.teacher"
 
     name = fields.Char()
+    topic = fields.Char()
+    phone = fields.Char()
     classrooms = fields.Many2many(comodel_name='school.classroom',
                                   relation='teacher_classroom',
                                   column2='teacher_id',
