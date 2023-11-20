@@ -3,6 +3,7 @@
 from datetime import date
 
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class player(models.Model):
@@ -20,9 +21,10 @@ class player(models.Model):
 
     # Datos del juego
     total_planets = fields.Integer(string='Total de planetas', compute='_get_player_planets')
-    attack = fields.Integer(string='Ataque', compute='_get_player_attack')
-    defense = fields.Integer(string='Defensa', compute='_get_player_defense')
-    health = fields.Integer(string='Salud', compute='_get_player_health')
+    attack = fields.Integer(string='Ataque', compute='_get_player_attack', store='True')
+    defense = fields.Integer(string='Defensa', compute='_get_player_defense', store='True')
+    health = fields.Integer(string='Salud', compute='_get_player_health', store='True')
+    is_active = fields.Boolean(string='Activo', compute='_get_is_active', store='True')
 
     # Relaciones
     planets = fields.One2many(
@@ -31,6 +33,15 @@ class player(models.Model):
         inverse_name='player',
         readonly=True
     )
+
+    # Función que calcula si estás activo en función de si tienes planetas o no
+    @api.depends('total_planets')
+    def _get_is_active(self):
+        for player in self:
+            if player.total_planets > 0:
+                player.is_active = True
+            else:
+                player.is_active = False
 
     # Función que calcula la edad a partir de la fecha de nacimiento
     @api.depends('birth_date')
@@ -155,6 +166,20 @@ class planet_spaceship(models.Model):
     image_spaceship = fields.Image(string='Imagen nave', related='spaceship.photo_mini')
     image_weapon_one = fields.Image(string='Imagen arma uno', related='weapon_one.photo_mini')
     image_weapon_two = fields.Image(string='Imagen arma dos', related='weapon_two.photo_mini')
+
+    #Restricción para que no puedan comprar naves si no tienen recursos
+    @api.constrains('spaceship')
+    def _check_minerals_materials(self):
+        for planet_spaceship in self:
+            mineral = planet_spaceship.spaceship.mineral_cost
+            material = planet_spaceship.spaceship.material_cost
+            if mineral > planet_spaceship.planet.minerals:
+                raise ValidationError('No tienes suficiente mineral')
+            elif material > planet_spaceship.planet.materials:
+                raise ValidationError('No tienes suficiente material')
+            else:
+                planet_spaceship.planet.minerals -= mineral
+                planet_spaceship.planet.materials -= material
 
 
 class spaceship(models.Model):

@@ -6,7 +6,7 @@
             <field name="name">interstellar player list</field>
             <field name="model">interstellar.player</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-warning="is_active==False">
                     <field name="photo_mini" widget="image"/>
                     <field name="name"/>
                     <field name="age"/>
@@ -15,7 +15,81 @@
                     <field name="attack"/>
                     <field name="defense"/>
                     <field name="health"/>
+                    <field name="is_active" invisible="1"/>
                 </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.player_kanban">
+            <field name="name">interstellar player kanban</field>
+            <field name="model">interstellar.player</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="planets"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_product_vignette">
+                                <a type="open">
+                                    <img class="oe_kanban_image"
+                                         t-att-alt="record.name.value"
+                                         t-att-src="kanban_image('interstellar.player', 'photo', record.id.value)"/>
+                                </a>
+                                <div class="oe_product_desc">
+                                    <h4>
+                                        <a type="edit">
+                                            <field name="name"/>
+                                        </a>
+                                    </h4>
+                                    <p>
+                                        <field name="age"/>
+                                        años
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="oe_product_desc">
+                                <p>
+                                    <field name="planets" widget="many2many_tags"/>
+                                </p>
+                                <p>
+                                    Ataque:
+                                    <field name="attack"/>
+                                </p>
+                                <p>
+                                    Defensa:
+                                    <field name="defense"/>
+                                </p>
+                                <p>
+                                    Salud:
+                                    <field name="health"/>
+                                </p>
+                            </div>
+
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.player_search">
+            <field name="name">interstellar player search</field>
+            <field name="model">interstellar.player</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="gender"/>
+                    <field name="attack" string="Ataque mínimo" filter_domain="[('attack', '&gt;=', self)]" />
+                    <field name="defense" string="Defensa mínima" filter_domain="[('defense', '&gt;=', self)]" />
+                    <field name="health" string="Salud mínima" filter_domain="[('health', '&gt;=', self)]" />
+                    <field name="attack" string="Ataque máximo" filter_domain="[('attack', '&lt;=', self)]" />
+                    <field name="defense" string="Defensa máxima" filter_domain="[('defense', '&lt;=', self)]" />
+                    <field name="health" string="Salud máxima" filter_domain="[('health', '&lt;=', self)]" />
+                    <filter name="active" string="Tiene planetas" domain="[('is_active', '=', True)]"/>
+                    <filter name="not_active" string="No tiene planetas" domain="[('is_active', '=', False)]"/>
+                    <filter name="group_by_gender" string="Género" context="{'group_by': 'gender'}"/>
+                    <filter name="group_by_is_active" string="Esta activo" context="{'group_by': 'is_active'}"/>
+                </search>
             </field>
         </record>
 
@@ -43,9 +117,10 @@
                             <group>
                                 <field name="attack"/>
                                 <field name="defense"/>
+                                <field name="health"/>
                             </group>
                             <group>
-                                <field name="health"/>
+                                <field name="is_active"/>
                                 <field name="total_planets"/>
                             </group>
                         </group>
@@ -124,7 +199,7 @@
             <field name="name">interstellar planet_spaceship list</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree delete="0">
                     <field name="spaceship"/>
                     <field name="weapon_one"/>
                     <field name="weapon_two"/>
@@ -135,7 +210,7 @@
             <field name="name">interstellar planet_spaceship form</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <form>
+                <form edit="false">
                     <sheet>
                         <group>
                             <!-- TODO FALTA ELIMINAR LA IMAGEN SI NO HAY NADA SELECCIONADO OCUPA MUCHO-->
@@ -263,7 +338,7 @@
         <record model="ir.actions.act_window" id="interstellar.action_player_window">
             <field name="name">Jugador</field>
             <field name="res_model">interstellar.player</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,kanban</field>
         </record>
         <record model="ir.actions.act_window" id="interstellar.action_planet_window">
             <field name="name">Planetas</field>
