@@ -1,7 +1,7 @@
 <odoo>
     <data>
         <!-- explicit list view definition -->
-        <!-- player TODO -->
+        <!-- player -->
         <record model="ir.ui.view" id="interstellar.player_tree">
             <field name="name">interstellar player list</field>
             <field name="model">interstellar.player</field>
@@ -65,7 +65,6 @@
                                     <field name="health"/>
                                 </p>
                             </div>
-
                         </t>
                     </templates>
                 </kanban>
@@ -79,12 +78,12 @@
                 <search>
                     <field name="name"/>
                     <field name="gender"/>
-                    <field name="attack" string="Ataque mínimo" filter_domain="[('attack', '&gt;=', self)]" />
-                    <field name="defense" string="Defensa mínima" filter_domain="[('defense', '&gt;=', self)]" />
-                    <field name="health" string="Salud mínima" filter_domain="[('health', '&gt;=', self)]" />
-                    <field name="attack" string="Ataque máximo" filter_domain="[('attack', '&lt;=', self)]" />
-                    <field name="defense" string="Defensa máxima" filter_domain="[('defense', '&lt;=', self)]" />
-                    <field name="health" string="Salud máxima" filter_domain="[('health', '&lt;=', self)]" />
+                    <field name="attack" string="Ataque mínimo" filter_domain="[('attack', '&gt;=', self)]"/>
+                    <field name="defense" string="Defensa mínima" filter_domain="[('defense', '&gt;=', self)]"/>
+                    <field name="health" string="Salud mínima" filter_domain="[('health', '&gt;=', self)]"/>
+                    <field name="attack" string="Ataque máximo" filter_domain="[('attack', '&lt;=', self)]"/>
+                    <field name="defense" string="Defensa máxima" filter_domain="[('defense', '&lt;=', self)]"/>
+                    <field name="health" string="Salud máxima" filter_domain="[('health', '&lt;=', self)]"/>
                     <filter name="active" string="Tiene planetas" domain="[('is_active', '=', True)]"/>
                     <filter name="not_active" string="No tiene planetas" domain="[('is_active', '=', False)]"/>
                     <filter name="group_by_gender" string="Género" context="{'group_by': 'gender'}"/>
@@ -110,8 +109,6 @@
                             </group>
                             <field name="photo" widget="image" class="oe_right"/>
                         </group>
-                    </sheet>
-                    <sheet>
                         <group>
                             <separator string="Datos del juego"/>
                             <group>
@@ -124,8 +121,6 @@
                                 <field name="total_planets"/>
                             </group>
                         </group>
-                    </sheet>
-                    <sheet>
                         <separator string="Planetas"/>
                         <field name="planets"/>
                     </sheet>
@@ -133,7 +128,7 @@
             </field>
         </record>
 
-        <!-- planet TODO-->
+        <!-- planet -->
         <record model="ir.ui.view" id="interstellar.planet_tree">
             <field name="name">interstellar planet list</field>
             <field name="model">interstellar.planet</field>
@@ -143,7 +138,7 @@
                     <field name="photo_mini" widget="image"/>
                     <field name="player"/>
                     <field name="race"/>
-                    <field name="minerals"/>
+                    <field name="minerals" decoration-warning="minerals"/>
                     <field name="materials"/>
                     <field name="attack"/>
                     <field name="defense"/>
@@ -169,8 +164,6 @@
                             </group>
                             <field name="photo" widget="image" class="oe_right"/>
                         </group>
-                    </sheet>
-                    <sheet>
                         <group>
                             <separator string="Estadísticas"/>
                             <group>
@@ -183,26 +176,23 @@
                                 <field name="defense"/>
                             </group>
                         </group>
-                    </sheet>
-                    <sheet>
-                        <group>
-                            <separator string="Flota"/>
-                            <field name="spaceships"/>
-                        </group>
+                        <separator string="Flota"/>
+                        <field name="spaceships"/>
                     </sheet>
                 </form>
             </field>
         </record>
 
-        <!-- planet_spaceship TODO-->
+        <!-- planet_spaceship -->
         <record model="ir.ui.view" id="interstellar.planet_spaceship_tree">
             <field name="name">interstellar planet_spaceship list</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <tree delete="0">
+                <tree delete="0" decoration-warning="actual_weight&gt;max_weight">
                     <field name="spaceship"/>
-                    <field name="weapon_one"/>
-                    <field name="weapon_two"/>
+                    <field name="actual_weight"/>
+                    <field name="max_weight"/>
+                    <field name="total_weapons"/>
                 </tree>
             </field>
         </record>
@@ -213,26 +203,29 @@
                 <form edit="false">
                     <sheet>
                         <group>
-                            <!-- TODO FALTA ELIMINAR LA IMAGEN SI NO HAY NADA SELECCIONADO OCUPA MUCHO-->
                             <group>
                                 <field name="spaceship"/>
                             </group>
-                            <field name="image_spaceship" widget="image" class="oe_right"/>
-                            <group>
-                                <field name="weapon_one"/>
+                            <group col="3">
+                                <group>
+                                    <field name="spaceship_level"/>
+                                </group>
+                                <group>
+                                    <field name="actual_weight"/>
+                                </group>
+                                <group>
+                                    <field name="max_weight"/>
+                                </group>
+
                             </group>
-                            <field name="image_weapon_one" widget="image" class="oe_right"/>
-                            <group>
-                                <field name="weapon_two"/>
-                            </group>
-                            <field name="image_weapon_two" widget="image" class="oe_right"/>
+                            <field name="weapons"/>
                         </group>
                     </sheet>
                 </form>
             </field>
         </record>
 
-        <!-- spaceship TODO-->
+        <!-- spaceship -->
         <record model="ir.ui.view" id="interstellar.spaceship_tree">
             <field name="name">interstellar spaceship list</field>
             <field name="model">interstellar.spaceship</field>
@@ -243,6 +236,9 @@
                     <field name="attack"/>
                     <field name="defense"/>
                     <field name="health"/>
+                    <field name="level"/>
+                    <field name="weight"/>
+                    <field name="max_weight"/>
                     <field name="mineral_cost"/>
                     <field name="material_cost"/>
                     <field name="mineral_collection"/>
@@ -265,14 +261,17 @@
                             </group>
                             <field name="photo" widget="image" class="oe_right"/>
                         </group>
-                    </sheet>
-                    <sheet>
-                        <group>
+                        <group col="3">
                             <separator string="Estadísticas"/>
                             <group>
                                 <field name="attack"/>
                                 <field name="defense"/>
                                 <field name="health"/>
+                            </group>
+                            <group>
+                                <field name="level"/>
+                                <field name="weight"/>
+                                <field name="max_weight"/>
                             </group>
                             <group>
                                 <field name="mineral_cost"/>
@@ -286,7 +285,7 @@
             </field>
         </record>
 
-        <!-- weapon TODO-->
+        <!-- weapon -->
         <record model="ir.ui.view" id="interstellar.weapon_tree">
             <field name="name">interstellar weapon list</field>
             <field name="model">interstellar.weapon</field>
@@ -297,7 +296,9 @@
                     <field name="attack"/>
                     <field name="defense"/>
                     <field name="health"/>
+                    <field name="level"/>
                     <field name="reload"/>
+                    <field name="weight"/>
                 </tree>
             </field>
         </record>
@@ -316,17 +317,17 @@
                             </group>
                             <field name="photo" widget="image" class="oe_right"/>
                         </group>
-                    </sheet>
-                    <sheet>
                         <group>
                             <separator string="Estadísticas"/>
                             <group>
                                 <field name="attack"/>
                                 <field name="defense"/>
+                                <field name="health"/>
                             </group>
                             <group>
-                                <field name="health"/>
+                                <field name="level"/>
                                 <field name="reload"/>
+                                <field name="weight"/>
                             </group>
                         </group>
                     </sheet>

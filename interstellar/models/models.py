@@ -109,6 +109,7 @@ class planet(models.Model):
     health = fields.Integer(string='Salud', compute='_get_planet_health')
     attack = fields.Integer(string='Ataque', compute='_get_planet_attack')
     defense = fields.Integer(string='Defensa', compute='_get_planet_defense')
+    level = fields.Integer(string='Nivel')
 
     # Relaciones
     player = fields.Many2one(
@@ -128,7 +129,9 @@ class planet(models.Model):
         for planet in self:
             health = 2000
             for relation in planet.spaceships:
-                health += relation.spaceship.health + relation.weapon_one.health + relation.weapon_two.health
+                health += relation.spaceship.health
+                for weapon in relation.weapons:
+                    health += weapon.health
             planet.health = health
 
     # Función que calcula el ataque total del planeta
@@ -137,7 +140,9 @@ class planet(models.Model):
         for planet in self:
             attack = 0
             for relation in planet.spaceships:
-                attack += relation.spaceship.attack + relation.weapon_one.attack + relation.weapon_two.attack
+                attack += relation.spaceship.attack
+                for weapon in relation.weapons:
+                    attack += weapon.attack
             planet.attack = attack
 
     # Función que calcula la defensa total del planeta
@@ -146,7 +151,9 @@ class planet(models.Model):
         for planet in self:
             defense = 0
             for relation in planet.spaceships:
-                defense = relation.spaceship.attack + relation.weapon_one.defense + relation.weapon_two.defense
+                defense += relation.spaceship.defense
+                for weapon in relation.weapons:
+                    defense += weapon.defense
             planet.defense = defense
 
 
@@ -154,20 +161,52 @@ class planet_spaceship(models.Model):
     _name = 'interstellar.planet_spaceship'
     _description = 'Relación de los planetas y las naves'
 
+    # Información nave
+    actual_weight = fields.Integer(string='Peso actual', compute='_get_actual_weight')
+    max_weight = fields.Integer(string='Peso max', related='spaceship.max_weight')
+    total_weapons = fields.Integer(string='Total armas', compute='_get_total_weapons')
+    spaceship_level = fields.Integer(string='Nivel nave', related='spaceship.level')
+
     # Relaciones
     planet = fields.Many2one(
         string='Planeta', comodel_name='interstellar.planet')
     spaceship = fields.Many2one(
         string='Nave', comodel_name='interstellar.spaceship')
-    weapon_one = fields.Many2one(string='Arma 1', comodel_name='interstellar.weapon')
-    weapon_two = fields.Many2one(string='Arma 2', comodel_name='interstellar.weapon')
+    weapons = fields.Many2many(string='Armas', domain="[('level', '<=', spaceship_level)]",
+                               comodel_name='interstellar.weapon', relation='spaceship_weapon',
+                               column1='weapon_id', column2='spaceship_id')
 
-    # Imagenes
-    image_spaceship = fields.Image(string='Imagen nave', related='spaceship.photo_mini')
-    image_weapon_one = fields.Image(string='Imagen arma uno', related='weapon_one.photo_mini')
-    image_weapon_two = fields.Image(string='Imagen arma dos', related='weapon_two.photo_mini')
+    # OnChange para que me calcule el peso actual
+    @api.onchange('spaceship')
+    def _onchange_spaceship(self):
+        self.actual_weight = self.spaceship.weight
 
-    #Restricción para que no puedan comprar naves si no tienen recursos
+    # Función para calcular el peso actual de la nave
+    @api.depends('weapons')
+    def _get_actual_weight(self):
+        for planet_spaceship in self:
+            total_weight = planet_spaceship.spaceship.weight
+            for weapon in planet_spaceship.weapons:
+                total_weight += weapon.weight
+            planet_spaceship.actual_weight = total_weight
+
+    # Función para calcular el total de armas por nave
+    @api.depends('weapons')
+    def _get_total_weapons(self):
+        for planet_spaceship in self:
+            total = 0
+            for weapon in planet_spaceship.weapons:
+                total += 1
+            planet_spaceship.total_weapons = total
+
+    # Restricción para que no puedan añadir armas si supera el peso máximo
+    @api.constrains('weapons')
+    def _check_add_weapons(self):
+        for planet_spaceship in self:
+            if planet_spaceship.actual_weight > planet_spaceship.max_weight:
+                raise ValidationError('Has superado el límite de peso')
+
+    # Restricción para que no puedan comprar naves si no tienen recursos
     @api.constrains('spaceship')
     def _check_minerals_materials(self):
         for planet_spaceship in self:
@@ -196,6 +235,9 @@ class spaceship(models.Model):
     attack = fields.Integer(string='Ataque')
     defense = fields.Integer(string='Defensa')
     health = fields.Integer(string='Salud')
+    weight = fields.Integer(string='Peso nave')
+    max_weight = fields.Integer(string='Peso Máximo')
+    level = fields.Integer(string='Nivel')
     mineral_cost = fields.Integer(string='Cos. minerales', help='Coste de minerales')
     material_cost = fields.Integer(string='Cos. materiales', help='Coste de materiales')
     mineral_collection = fields.Integer(string='Rec. minerales', help='Recolección de minerales')
@@ -217,3 +259,5 @@ class weapon(models.Model):
     defense = fields.Integer(string='Defensa')
     health = fields.Integer(string='Salud')
     reload = fields.Integer(string='Recarga')
+    weight = fields.Integer(string='Peso')
+    level = fields.Integer(string='Nivel')
