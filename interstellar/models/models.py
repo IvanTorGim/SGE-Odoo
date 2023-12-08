@@ -16,14 +16,14 @@ class player(models.Model):
     name = fields.Char(string='Nombre')
     last_name = fields.Char(string='Apellidos')
     birth_date = fields.Date(string='Fecha de nacimiento')
-    age = fields.Integer(string='Edad', compute='_get_age')
+    age = fields.Integer(string='Edad', compute='_get_age', store='True')
     gender = fields.Selection([('male', 'Hombre'), ('female', 'Mujer'), ('other', 'Otro')])
 
     # Datos del juego
     total_planets = fields.Integer(string='Total de planetas', compute='_get_player_planets')
-    attack = fields.Integer(string='Ataque', compute='_get_player_attack', store='True')
-    defense = fields.Integer(string='Defensa', compute='_get_player_defense', store='True')
-    health = fields.Integer(string='Salud', compute='_get_player_health', store='True')
+    attack = fields.Integer(string='Ataque', compute='_get_player_attack')
+    defense = fields.Integer(string='Defensa', compute='_get_player_defense')
+    health = fields.Integer(string='Salud', compute='_get_player_health')
     is_active = fields.Boolean(string='Activo', compute='_get_is_active', store='True')
 
     # Relaciones

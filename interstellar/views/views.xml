@@ -9,6 +9,7 @@
                 <tree decoration-warning="is_active==False">
                     <field name="photo_mini" widget="image"/>
                     <field name="name"/>
+                    <field name="last_name"/>
                     <field name="age"/>
                     <field name="gender"/>
                     <field name="planets" widget="many2many_tags"/>
@@ -48,21 +49,18 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="oe_product_desc">
+                            <div class="oe_kanban_content" style="width">
                                 <p>
                                     <field name="planets" widget="many2many_tags"/>
                                 </p>
                                 <p>
-                                    Ataque:
-                                    <field name="attack"/>
+                                    ⚔️ <field name="attack"/>
                                 </p>
                                 <p>
-                                    Defensa:
-                                    <field name="defense"/>
+                                    🛡️ <field name="defense"/>
                                 </p>
                                 <p>
-                                    Salud:
-                                    <field name="health"/>
+                                    ❤️ <field name="health"/>
                                 </p>
                             </div>
                         </t>
@@ -77,13 +75,10 @@
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
+                    <field name="last_name"/>
                     <field name="gender"/>
-                    <field name="attack" string="Ataque mínimo" filter_domain="[('attack', '&gt;=', self)]"/>
-                    <field name="defense" string="Defensa mínima" filter_domain="[('defense', '&gt;=', self)]"/>
-                    <field name="health" string="Salud mínima" filter_domain="[('health', '&gt;=', self)]"/>
-                    <field name="attack" string="Ataque máximo" filter_domain="[('attack', '&lt;=', self)]"/>
-                    <field name="defense" string="Defensa máxima" filter_domain="[('defense', '&lt;=', self)]"/>
-                    <field name="health" string="Salud máxima" filter_domain="[('health', '&lt;=', self)]"/>
+                    <field name="age" string="Edad mínima" filter_domain="[('age', '&gt;=', self)]"/>
+                    <field name="age" string="Edad máxima" filter_domain="[('age', '&lt;=', self)]"/>
                     <filter name="active" string="Tiene planetas" domain="[('is_active', '=', True)]"/>
                     <filter name="not_active" string="No tiene planetas" domain="[('is_active', '=', False)]"/>
                     <filter name="group_by_gender" string="Género" context="{'group_by': 'gender'}"/>
@@ -138,7 +133,7 @@
                     <field name="photo_mini" widget="image"/>
                     <field name="player"/>
                     <field name="race"/>
-                    <field name="minerals" decoration-warning="minerals"/>
+                    <field name="minerals"/>
                     <field name="materials"/>
                     <field name="attack"/>
                     <field name="defense"/>
