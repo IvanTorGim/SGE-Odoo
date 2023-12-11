@@ -1,0 +1,51 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+<!--
+    <record model="ir.ui.view" id="militar.list">
+      <field name="name">militar list</field>
+      <field name="model">militar.militar</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+-->
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="militar.action_window_player">
+      <field name="name">militar player window</field>
+      <field name="res_model">militar.player</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="militar.action_window_weapon">
+      <field name="name">militar weapon window</field>
+      <field name="res_model">militar.weapon</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- server action to the one above -->
+
+
+    <!-- Top menu item -->
+
+    <menuitem name="militar" id="militar.menu_root"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Menu 1" id="militar.menu_1" parent="militar.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Player" id="militar.menu_player_list" parent="militar.menu_1"
+              action="militar.action_window_player"/>
+    <menuitem name="Weapon" id="militar.menu_weapon_list" parent="militar.menu_1"
+              action="militar.action_window_weapon"/>
+
+  </data>
+</odoo>
