@@ -1,0 +1,94 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+
+        <record model="ir.ui.view" id="paquetalia.form">
+            <field name="name">paquetalia furgoneta form</field>
+            <field name="model">paquetalia.furgoneta</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <separator string="Datos"/>
+                                <field name="name"/>
+                                <field name="matricula"/>
+                                <field name="capacidad"/>
+                            </group>
+                            <field name="foto" widget="image" class="oe_right"/>
+                        </group>
+                        <group>
+                            <field name="paquetes"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="paquetalia.list">
+            <field name="name">paquetalia viaje list</field>
+            <field name="model">paquetalia.viaje</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="identificador"/>
+                    <field name="volumen_ocupado"/>
+                    <field name="conductor"/>
+                    <field name="furgoneta"/>
+                    <field name="paquetes" widget="many2many_tags"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="paquetalia.search">
+            <field name="name">paquetalia viaje search</field>
+            <field name="model">paquetalia.viaje</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="furgoneta"/>
+                    <filter name="agrupar_por_furgoneta" string="Agrupar por furgoneta"
+                            context="{'group_by': 'furgoneta'}"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+
+        <record model="ir.actions.act_window" id="paquetalia.action_window_furgoneta">
+            <field name="name">Furgoneta</field>
+            <field name="res_model">paquetalia.furgoneta</field>
+            <field name="view_mode">tree,form</field>
+            <!-- Agrupar por defecto -->
+            <field name="context">{'search_default_agrupar_por_furgoneta': 1}</field>
+        </record>
+        <record model="ir.actions.act_window" id="paquetalia.action_window_viaje">
+            <field name="name">Viaje</field>
+            <field name="res_model">paquetalia.viaje</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record model="ir.actions.act_window" id="paquetalia.action_window_paquete">
+            <field name="name">Paquete</field>
+            <field name="res_model">paquetalia.paquete</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- Top menu item -->
+
+        <menuitem name="paquetalia" id="paquetalia.menu_root"/>
+
+        <!-- menu categories -->
+
+        <menuitem name="Menu" id="paquetalia.menu_1" parent="paquetalia.menu_root"/>
+        <!-- actions -->
+
+        <menuitem name="Fugoneta" id="paquetalia.menu_furgoneta_list" parent="paquetalia.menu_1"
+                  action="paquetalia.action_window_furgoneta"/>
+        <menuitem name="Viaje" id="paquetalia.menu_viaje_list" parent="paquetalia.menu_1"
+                  action="paquetalia.action_window_viaje"/>
+        <menuitem name="Paquete" id="paquetalia.menu_paquete_list" parent="paquetalia.menu_1"
+                  action="paquetalia.action_window_paquete"/>
+    </data>
+</odoo>
