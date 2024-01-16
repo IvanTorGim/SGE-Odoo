@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import date
+from datetime import date, datetime
 
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
@@ -30,8 +30,7 @@ class player(models.Model):
     planets = fields.One2many(
         string='Planetas',
         comodel_name='interstellar.planet',
-        inverse_name='player',
-        readonly=True
+        inverse_name='player'
     )
 
     # Función que calcula si estás activo en función de si tienes planetas o no
@@ -261,3 +260,67 @@ class weapon(models.Model):
     reload = fields.Integer(string='Recarga')
     weight = fields.Integer(string='Peso')
     level = fields.Integer(string='Nivel')
+
+
+class battle(models.Model):
+    _name = 'interstellar.battle'
+    _description = 'Batalla'
+
+    name = fields.Char(string='name', default=lambda b: "Batalla " + str(datetime.now()), readonly=True)
+    player_one = fields.Many2one(string='Player1', comodel_name='interstellar.player',
+                                 domain=[('is_active', '=', True)])
+    attack_one = fields.Integer(string='Ataque', related='player_one.attack')
+    defense_one = fields.Integer(string='Defensa', related='player_one.defense')
+    health_one = fields.Integer(string='Salud', related='player_one.health')
+    planets_one = fields.One2many(string='Planetas', related='player_one.planets')
+
+    player_two = fields.Many2one(string='Player2', comodel_name='interstellar.player',
+                                 domain=[('is_active', '=', True)])
+    attack_two = fields.Integer(string='Ataque', related='player_two.attack')
+    defense_two = fields.Integer(string='Defensa', related='player_two.defense')
+    health_two = fields.Integer(string='Salud', related='player_two.health')
+    planets_two = fields.One2many(string='Planetas', related='player_two.planets')
+
+    # Restricción para no elegir el mismo jugador
+    @api.constrains('player_one')
+    def _check_distinct_player(self):
+        for battle in self:
+            if battle.player_one == battle.player_two:
+                raise ValidationError('Tienes que elegir diferentes jugadores')
+
+    # Restricción para no elegir el mismo jugador
+    @api.constrains('player_two')
+    def _check_distinct_player(self):
+        for battle in self:
+            if battle.player_two == battle.player_one:
+                raise ValidationError('Tienes que elegir diferentes jugadores')
+
+    # todo crear las funciones
+
+    # crear nombre de la batalla
+    def _get_name_battle(self):
+        for battle in self:
+            name = battle.player_one.name + battle.player_two.name + str(date.today())
+
+    def start_battle(self):
+        for battle in self:
+            damage_one = battle.player_two.attack - battle.player_one.defense
+            damage_two = battle.player_one.attack - battle.player_two.defense
+            if damage_one > 0:
+                battle.player_one.health -= damage_one
+            if damage_two > 0:
+                battle.player_two.health -= damage_two
+
+    def view_player_one(self):
+        for battle in self:
+            action = self.env.ref('interstellar.action_player_window_battle').read()[0]
+            action['res_id'] = battle.player_one.id
+            return action
+
+    def view_player_two(self):
+        for battle in self:
+            action = self.env.ref('interstellar.action_player_window_battle').read()[0]
+            action['res_id'] = battle.player_two.id
+            return action
+
+

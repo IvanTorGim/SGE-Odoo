@@ -4,3 +4,4 @@ access_interstellar_spaceship,interstellar.spaceship,model_interstellar_spaceshi
 access_interstellar_weapon,interstellar.weapon,model_interstellar_weapon,base.group_user,1,1,1,1
 access_interstellar_planet,interstellar.planet,model_interstellar_planet,base.group_user,1,1,1,1
 access_interstellar_planet_spaceship,interstellar.planet_spaceship,model_interstellar_planet_spaceship,base.group_user,1,1,1,1
+access_interstellar_battle,interstellar.battle,model_interstellar_battle,base.group_user,1,1,1,1

@@ -54,13 +54,16 @@
                                     <field name="planets" widget="many2many_tags"/>
                                 </p>
                                 <p>
-                                    ⚔️ <field name="attack"/>
+                                    ⚔️
+                                    <field name="attack"/>
                                 </p>
                                 <p>
-                                    🛡️ <field name="defense"/>
+                                    🛡️
+                                    <field name="defense"/>
                                 </p>
                                 <p>
-                                    ❤️ <field name="health"/>
+                                    ❤️
+                                    <field name="health"/>
                                 </p>
                             </div>
                         </t>
@@ -141,11 +144,12 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.ui.view" id="interstellar.planet_form">
             <field name="name">interstellar planet form</field>
             <field name="model">interstellar.planet</field>
             <field name="arch" type="xml">
-                <form>
+                <form edit="0">
                     <sheet>
                         <group>
                             <group>
@@ -183,7 +187,7 @@
             <field name="name">interstellar planet_spaceship list</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <tree delete="0" decoration-warning="actual_weight&gt;max_weight">
+                <tree edit="0" delete="0" decoration-warning="actual_weight&gt;max_weight">
                     <field name="spaceship"/>
                     <field name="actual_weight"/>
                     <field name="max_weight"/>
@@ -191,11 +195,12 @@
                 </tree>
             </field>
         </record>
+
         <record model="ir.ui.view" id="interstellar.planet_spaceship_form">
             <field name="name">interstellar planet_spaceship form</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <form edit="false">
+                <form edit="0">
                     <sheet>
                         <group>
                             <group>
@@ -246,7 +251,7 @@
             <field name="name">interstellar spaceship form</field>
             <field name="model">interstellar.spaceship</field>
             <field name="arch" type="xml">
-                <form>
+                <form edit="0">
                     <sheet>
                         <group>
                             <separator string="Información"/>
@@ -302,7 +307,7 @@
             <field name="name">interstellar weapons form</field>
             <field name="model">interstellar.weapon</field>
             <field name="arch" type="xml">
-                <form>
+                <form edit="0">
                     <sheet>
                         <group>
                             <separator string="Información"/>
@@ -330,11 +335,98 @@
             </field>
         </record>
 
+        <!-- Battle -->
+        <record model="ir.ui.view" id="interstellar.battle_form">
+            <field name="name">interstellar battle form</field>
+            <field name="model">interstellar.battle</field>
+            <field name="arch" type="xml">
+                <form edit="0">
+                    <header>
+                        <button type="object" class="btn" name="start_battle" string="Empezar batalla"/>
+                        <separator string="Jugador 1"/>
+                        <button type="object" class="btn" name="view_player_one" string="Jugador 1"/>
+                        <button type="object" class="btn" name="view_player_one" string="Comprar naves"/>
+                        <separator string="Jugador 2"/>
+                        <button type="object" class="btn" name="view_player_two" string="Jugador 2"/>
+                        <button type="object" class="btn" name="view_player_two" string="Comprar naves"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <group>
+                                <separator string="Jugador 1"/>
+                                <group>
+                                    <field name="player_one"/>
+                                    <separator string="Estadisticas"/>
+                                    <field name="attack_one"/>
+                                    <field name="defense_one"/>
+                                    <field name="health_one"/>
+                                </group>
+                            </group>
+                            <group>
+                                <separator string="Jugador 2"/>
+                                <group>
+                                    <field name="player_two"/>
+                                    <separator string="Estadisticas"/>
+                                    <field name="attack_two"/>
+                                    <field name="defense_two"/>
+                                    <field name="health_two"/>
+                                </group>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="interstellar.player_form_battle">
+            <field name="name">interstellar player form battle</field>
+            <field name="model">interstellar.player</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <separator string="Datos personales"/>
+                                <field name="name"/>
+                                <field name="last_name"/>
+                                <field name="birth_date"/>
+                                <field name="age"/>
+                                <field name="gender"/>
+                            </group>
+                            <field name="photo" widget="image" class="oe_right"/>
+                        </group>
+                        <group>
+                            <separator string="Datos del juego"/>
+                            <group>
+                                <field name="attack"/>
+                                <field name="defense"/>
+                                <field name="health"/>
+                            </group>
+                            <group>
+                                <field name="is_active"/>
+                                <field name="total_planets"/>
+                            </group>
+                        </group>
+                        <separator string="Planetas"/>
+                        <field name="planets"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
         <!-- actions opening views on models -->
         <record model="ir.actions.act_window" id="interstellar.action_player_window">
             <field name="name">Jugador</field>
             <field name="res_model">interstellar.player</field>
             <field name="view_mode">tree,form,kanban</field>
+        </record>
+        <record model="ir.actions.act_window" id="interstellar.action_player_window_battle">
+            <field name="name">Jugador</field>
+            <field name="res_model">interstellar.player</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" eval="ref('interstellar.player_form_battle')"/>
         </record>
         <record model="ir.actions.act_window" id="interstellar.action_planet_window">
             <field name="name">Planetas</field>
@@ -351,6 +443,18 @@
             <field name="res_model">interstellar.weapon</field>
             <field name="view_mode">tree,form</field>
         </record>
+        <record model="ir.actions.act_window" id="interstellar.action_battle_window">
+            <field name="name">Batalla</field>
+            <field name="res_model">interstellar.battle</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <!-- TODO ACABAR EL CRON-->
+        <!-- Cron -->
+        <!--        <record model="ir.cron" forcecreate="True" id="interstellar.player_cron">-->
+        <!--            <field name="name">Player Cron</field>-->
+        <!--            <field name="model_id" ref="model_res_partner"/>-->
+        <!--        </record>-->
 
         <!-- server action to the one above -->
         <!--
@@ -373,15 +477,17 @@
 
         <!-- menu categories -->
         <menuitem name="Juego" id="interstellar.menu_game" parent="interstellar.menu_root"/>
+        <menuitem name="Batalla" id="interstellar.menu_battle" parent="interstellar.menu_root"
+                  action="interstellar.action_battle_window"/>
 
         <!-- actions -->
         <menuitem name="Jugador" id="interstellar.player_list" parent="interstellar.menu_game"
                   action="interstellar.action_player_window"/>
-        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
-                  action="interstellar.action_planet_window"/>
         <menuitem name="Naves" id="interstellar.spaceship_list" parent="interstellar.menu_game"
                   action="interstellar.action_spaceship_window"/>
         <menuitem name="Armas" id="interstellar.weapon_list" parent="interstellar.menu_game"
                   action="interstellar.action_weapon_window"/>
+        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
+                  action="interstellar.action_planet_window"/>
     </data>
 </odoo>
