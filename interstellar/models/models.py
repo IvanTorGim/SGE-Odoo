@@ -7,13 +7,14 @@ from odoo.exceptions import ValidationError
 
 
 class player(models.Model):
-    _name = 'interstellar.player'
-    _description = 'Jugador de Interstellar'
+    _name = 'res.partner'
+    _inherit = 'res.partner'
+    # _description = 'Jugador de Interstellar'
 
     # Datos del jugador
-    photo = fields.Image(string='Foto', max_width=200, max_height=200)
-    photo_mini = fields.Image(related='photo', string='Foto mini', max_width=50, max_height=50)
-    name = fields.Char(string='Nombre')
+    # photo = fields.Image(string='Foto', max_width=200, max_height=200)
+    photo_mini = fields.Image(related='image_128', string='Foto mini', max_width=50, max_height=50)
+    # name = fields.Char(string='Nombre')
     last_name = fields.Char(string='Apellidos')
     birth_date = fields.Date(string='Fecha de nacimiento')
     age = fields.Integer(string='Edad', compute='_get_age', store='True')
@@ -113,7 +114,7 @@ class planet(models.Model):
     # Relaciones
     player = fields.Many2one(
         string='Jugador',
-        comodel_name='interstellar.player'
+        comodel_name='res.partner'
     )
 
     spaceships = fields.One2many(
@@ -121,6 +122,8 @@ class planet(models.Model):
         comodel_name='interstellar.planet_spaceship',
         inverse_name='planet'
     )
+
+    #TODO Función que reinicie las estadistícas y la flota de los planet
 
     # Función que calcula la salud total del planeta
     @api.depends('spaceships')
@@ -267,14 +270,14 @@ class battle(models.Model):
     _description = 'Batalla'
 
     name = fields.Char(string='name', default=lambda b: "Batalla " + str(datetime.now()), readonly=True)
-    player_one = fields.Many2one(string='Player1', comodel_name='interstellar.player',
+    player_one = fields.Many2one(string='Player1', comodel_name='res.partner',
                                  domain=[('is_active', '=', True)])
     attack_one = fields.Integer(string='Ataque', related='player_one.attack')
     defense_one = fields.Integer(string='Defensa', related='player_one.defense')
     health_one = fields.Integer(string='Salud', related='player_one.health')
     planets_one = fields.One2many(string='Planetas', related='player_one.planets')
 
-    player_two = fields.Many2one(string='Player2', comodel_name='interstellar.player',
+    player_two = fields.Many2one(string='Player2', comodel_name='res.partner',
                                  domain=[('is_active', '=', True)])
     attack_two = fields.Integer(string='Ataque', related='player_two.attack')
     defense_two = fields.Integer(string='Defensa', related='player_two.defense')
@@ -322,5 +325,3 @@ class battle(models.Model):
             action = self.env.ref('interstellar.action_player_window_battle').read()[0]
             action['res_id'] = battle.player_two.id
             return action
-
-

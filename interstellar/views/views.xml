@@ -4,7 +4,7 @@
         <!-- player -->
         <record model="ir.ui.view" id="interstellar.player_tree">
             <field name="name">interstellar player list</field>
-            <field name="model">interstellar.player</field>
+            <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <tree decoration-warning="is_active==False">
                     <field name="photo_mini" widget="image"/>
@@ -23,7 +23,7 @@
 
         <record model="ir.ui.view" id="interstellar.player_kanban">
             <field name="name">interstellar player kanban</field>
-            <field name="model">interstellar.player</field>
+            <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <kanban>
                     <field name="id"/>
@@ -35,7 +35,7 @@
                                 <a type="open">
                                     <img class="oe_kanban_image"
                                          t-att-alt="record.name.value"
-                                         t-att-src="kanban_image('interstellar.player', 'photo', record.id.value)"/>
+                                         t-att-src="kanban_image('res.partner', 'image_128', record.id.value)"/>
                                 </a>
                                 <div class="oe_product_desc">
                                     <h4>
@@ -74,7 +74,7 @@
 
         <record model="ir.ui.view" id="interstellar.player_search">
             <field name="name">interstellar player search</field>
-            <field name="model">interstellar.player</field>
+            <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="name"/>
@@ -90,9 +90,10 @@
             </field>
         </record>
 
+
         <record model="ir.ui.view" id="interstellar.player_form">
             <field name="name">interstellar player form</field>
-            <field name="model">interstellar.player</field>
+            <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -105,7 +106,7 @@
                                 <field name="age"/>
                                 <field name="gender"/>
                             </group>
-                            <field name="photo" widget="image" class="oe_right"/>
+                            <field name="image_128" widget="image" class="oe_right"/>
                         </group>
                         <group>
                             <separator string="Datos del juego"/>
@@ -381,7 +382,7 @@
 
         <record model="ir.ui.view" id="interstellar.player_form_battle">
             <field name="name">interstellar player form battle</field>
-            <field name="model">interstellar.player</field>
+            <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <form create="0" edit="0" delete="0">
                     <sheet>
@@ -394,7 +395,7 @@
                                 <field name="age"/>
                                 <field name="gender"/>
                             </group>
-                            <field name="photo" widget="image" class="oe_right"/>
+                            <field name="image_128" widget="image" class="oe_right"/>
                         </group>
                         <group>
                             <separator string="Datos del juego"/>
@@ -416,33 +417,61 @@
         </record>
 
         <!-- actions opening views on models -->
+        <!-- player -->
         <record model="ir.actions.act_window" id="interstellar.action_player_window">
             <field name="name">Jugador</field>
-            <field name="res_model">interstellar.player</field>
+            <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form,kanban</field>
+            <field name="context">{'search_default_group_by_is_active':1}</field>
+        </record>
+        <record model="ir.actions.act_window.view" id="interstellar.action_view_player_tree">
+            <field eval="1" name="sequence"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="interstellar.player_tree"/>
+            <field name="act_window_id" ref="interstellar.action_player_window"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="interstellar.action_view_player_form">
+            <field eval="2" name="sequence"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="interstellar.player_form"/>
+            <field name="act_window_id" ref="interstellar.action_player_window"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="interstellar.action_view_player_kanban">
+            <field eval="3" name="sequence"/>
+            <field name="view_mode">kanban</field>
+            <field name="view_id" ref="interstellar.player_kanban"/>
+            <field name="act_window_id" ref="interstellar.action_player_window"/>
         </record>
         <record model="ir.actions.act_window" id="interstellar.action_player_window_battle">
             <field name="name">Jugador</field>
-            <field name="res_model">interstellar.player</field>
+            <field name="res_model">res.partner</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
             <field name="view_id" eval="ref('interstellar.player_form_battle')"/>
         </record>
+
+        <!-- planet -->
         <record model="ir.actions.act_window" id="interstellar.action_planet_window">
             <field name="name">Planetas</field>
             <field name="res_model">interstellar.planet</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <!-- spaceship -->
         <record model="ir.actions.act_window" id="interstellar.action_spaceship_window">
             <field name="name">Naves</field>
             <field name="res_model">interstellar.spaceship</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <!-- weapon -->
         <record model="ir.actions.act_window" id="interstellar.action_weapon_window">
             <field name="name">Armas</field>
             <field name="res_model">interstellar.weapon</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <!-- battle -->
         <record model="ir.actions.act_window" id="interstellar.action_battle_window">
             <field name="name">Batalla</field>
             <field name="res_model">interstellar.battle</field>
@@ -483,11 +512,11 @@
         <!-- actions -->
         <menuitem name="Jugador" id="interstellar.player_list" parent="interstellar.menu_game"
                   action="interstellar.action_player_window"/>
+        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
+                  action="interstellar.action_planet_window"/>
         <menuitem name="Naves" id="interstellar.spaceship_list" parent="interstellar.menu_game"
                   action="interstellar.action_spaceship_window"/>
         <menuitem name="Armas" id="interstellar.weapon_list" parent="interstellar.menu_game"
                   action="interstellar.action_weapon_window"/>
-        <menuitem name="Planetas" id="interstellar.planet_list" parent="interstellar.menu_game"
-                  action="interstellar.action_planet_window"/>
     </data>
 </odoo>
