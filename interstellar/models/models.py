@@ -22,6 +22,7 @@ class player(models.Model):
 
     # Datos del juego
     total_planets = fields.Integer(string='Total de planetas', compute='_get_player_planets')
+    planet_names = fields.Char(string="Nombre de los planetas", compute='_get_planet_names')
     attack = fields.Integer(string='Ataque', compute='_get_player_attack')
     defense = fields.Integer(string='Defensa', compute='_get_player_defense')
     health = fields.Integer(string='Salud', compute='_get_player_health')
@@ -57,10 +58,12 @@ class player(models.Model):
     @api.depends('planets')
     def _get_player_planets(self):
         for player in self:
-            total = 0
-            for planet in player.planets:
-                total += 1
-            player.total_planets = total
+            player.total_planets = len(player.planets)
+
+    # Función que calcula el nombre de los planetas
+    @api.depends('planets')
+    def _get_planet_names(self):
+        self.planet_names = str.join(', ', self.planets.mapped(lambda p: str(p.name)))
 
     # Función que calcula el ataque total del jugador
     @api.depends('planets')
@@ -104,8 +107,8 @@ class planet(models.Model):
     age = fields.Integer(string='Edad', )
 
     # Estadísticas del planeta
-    minerals = fields.Integer(default=1000, string='Minerales', readonly=True)
-    materials = fields.Integer(default=1000, string='Materiales', readonly=True)
+    minerals = fields.Integer(default=1000, string='Minerales')
+    materials = fields.Integer(default=1000, string='Materiales')
     health = fields.Integer(string='Salud', compute='_get_planet_health')
     attack = fields.Integer(string='Ataque', compute='_get_planet_attack')
     defense = fields.Integer(string='Defensa', compute='_get_planet_defense')
@@ -123,13 +126,33 @@ class planet(models.Model):
         inverse_name='planet'
     )
 
-    #TODO Función que reinicie las estadistícas y la flota de los planet
+    # TODO modificar la función del cron
+    @api.model
+    def update_resources(self):
+        planets = self.env['interstellar.planet'].search([])
+        for planet in planets:
+            if len(planet.spaceships) > 0:
+                for planet_spaceship in planet.spaceships:
+                    planet.materials += planet_spaceship.spaceship.material_collection
+                    planet.minerals += planet_spaceship.spaceship.mineral_collection
+
+    # TODO Función que reinicie las estadísticas y la flota de los planet
+    @api.onchange('player')
+    def _on_change_player(self):
+        print(self.minerals)
+        self.write({'minerals': 1000, 'materials': 1000})
+        print(self.minerals)
+        for planet in self:
+            print(planet.spaceships)
+            for spaceship in self.spaceships:
+                planet.write({'spaceships': [(2, spaceship.id, 0)]})
+            print(planet.spaceships)
 
     # Función que calcula la salud total del planeta
-    @api.depends('spaceships')
+    @api.depends('spaceships', 'player')
     def _get_planet_health(self):
         for planet in self:
-            health = 2000
+            health = planet.health
             for relation in planet.spaceships:
                 health += relation.spaceship.health
                 for weapon in relation.weapons:
@@ -269,50 +292,44 @@ class battle(models.Model):
     _name = 'interstellar.battle'
     _description = 'Batalla'
 
-    name = fields.Char(string='name', default=lambda b: "Batalla " + str(datetime.now()), readonly=True)
+    # Campos de la batalla
+    name = fields.Char(string='Nombre', default=lambda b: "Batalla " + str(datetime.now()), readonly=True)
+    battle_state = fields.Selection(string='Estado de la batalla',
+                                    selection=[('preparation', 'Preparación'), ('active', 'Activa'),
+                                               ('finished', 'Finalizada')], default='preparation', readonly=True)
+    # Campos del jugador 1
     player_one = fields.Many2one(string='Player1', comodel_name='res.partner',
                                  domain=[('is_active', '=', True)])
     attack_one = fields.Integer(string='Ataque', related='player_one.attack')
     defense_one = fields.Integer(string='Defensa', related='player_one.defense')
-    health_one = fields.Integer(string='Salud', related='player_one.health')
-    planets_one = fields.One2many(string='Planetas', related='player_one.planets')
+    health_one = fields.Integer(string='Salud', related='player_one.health', store=True)
+    planets_one = fields.One2many(related='player_one.planets')
+    planet_names_one = fields.Char(string='Nombre de los planetas', related='player_one.planet_names')
 
+    # Campos del jugador 1
     player_two = fields.Many2one(string='Player2', comodel_name='res.partner',
                                  domain=[('is_active', '=', True)])
     attack_two = fields.Integer(string='Ataque', related='player_two.attack')
     defense_two = fields.Integer(string='Defensa', related='player_two.defense')
-    health_two = fields.Integer(string='Salud', related='player_two.health')
-    planets_two = fields.One2many(string='Planetas', related='player_two.planets')
+    health_two = fields.Integer(string='Salud', related='player_two.health', store=True)
+    planets_two = fields.One2many(related='player_two.planets')
+    planet_names_two = fields.Char(string='Nombre de los planetas', related='player_two.planet_names')
 
     # Restricción para no elegir el mismo jugador
-    @api.constrains('player_one')
+    @api.constrains('player_one', 'player_two')
     def _check_distinct_player(self):
         for battle in self:
-            if battle.player_one == battle.player_two:
-                raise ValidationError('Tienes que elegir diferentes jugadores')
-
-    # Restricción para no elegir el mismo jugador
-    @api.constrains('player_two')
-    def _check_distinct_player(self):
-        for battle in self:
-            if battle.player_two == battle.player_one:
+            if battle.player_one.id == battle.player_two.id:
                 raise ValidationError('Tienes que elegir diferentes jugadores')
 
     # todo crear las funciones
 
-    # crear nombre de la batalla
     def _get_name_battle(self):
         for battle in self:
             name = battle.player_one.name + battle.player_two.name + str(date.today())
 
     def start_battle(self):
-        for battle in self:
-            damage_one = battle.player_two.attack - battle.player_one.defense
-            damage_two = battle.player_one.attack - battle.player_two.defense
-            if damage_one > 0:
-                battle.player_one.health -= damage_one
-            if damage_two > 0:
-                battle.player_two.health -= damage_two
+        self.battle_state = 'active'
 
     def view_player_one(self):
         for battle in self:

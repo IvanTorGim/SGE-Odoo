@@ -118,6 +118,7 @@
                             <group>
                                 <field name="is_active"/>
                                 <field name="total_planets"/>
+                                <field name="planet_names"/>
                             </group>
                         </group>
                         <separator string="Planetas"/>
@@ -151,6 +152,10 @@
             <field name="model">interstellar.planet</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="%(action_buy_spaceship)d" type="action"
+                                string="Comprar nave" class="btn-primary" context="{'default_planet':active_id}"/>
+                    </header>
                     <sheet>
                         <group>
                             <group>
@@ -188,11 +193,12 @@
             <field name="name">interstellar planet_spaceship list</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <tree delete="0" decoration-warning="actual_weight&gt;max_weight">
+                <tree create="0" delete="0" decoration-warning="spaceship_level&lt;2">
                     <field name="spaceship"/>
                     <field name="actual_weight"/>
                     <field name="max_weight"/>
                     <field name="total_weapons"/>
+                    <field name="spaceship_level"/>
                 </tree>
             </field>
         </record>
@@ -217,7 +223,6 @@
                                 <group>
                                     <field name="max_weight"/>
                                 </group>
-
                             </group>
                             <field name="weapons"/>
                         </group>
@@ -343,17 +348,19 @@
             <field name="arch" type="xml">
                 <form edit="0">
                     <header>
-                        <button type="object" class="btn" name="start_battle" string="Empezar batalla"/>
-                        <separator string="Jugador 1"/>
-                        <button type="object" class="btn" name="view_player_one" string="Jugador 1"/>
-                        <button type="object" class="btn" name="view_player_one" string="Comprar naves"/>
-                        <separator string="Jugador 2"/>
-                        <button type="object" class="btn" name="view_player_two" string="Jugador 2"/>
-                        <button type="object" class="btn" name="view_player_two" string="Comprar naves"/>
+                        <button type="object" class="btn" name="start_battle" string="Empezar batalla"
+                                attrs="{'invisible': [('battle_state', '!=', 'preparation')]}"/>
+                        <button type="object" class="btn" name="view_player_one" string="Jugador 1"
+                                attrs="{'invisible': [('battle_state', '=', 'preparation')]}"/>
+                        <button type="object" class="btn" name="view_player_two" string="Jugador 2"
+                                attrs="{'invisible': [('battle_state', '=', 'preparation')]}"/>
                     </header>
                     <sheet>
                         <group>
                             <field name="name"/>
+                            <field name="battle_state"/>
+                        </group>
+                        <group>
                             <group>
                                 <separator string="Jugador 1"/>
                                 <group>
@@ -362,6 +369,7 @@
                                     <field name="attack_one"/>
                                     <field name="defense_one"/>
                                     <field name="health_one"/>
+                                    <field name="planet_names_one"/>
                                 </group>
                             </group>
                             <group>
@@ -372,6 +380,7 @@
                                     <field name="attack_two"/>
                                     <field name="defense_two"/>
                                     <field name="health_two"/>
+                                    <field name="planet_names_two"/>
                                 </group>
                             </group>
                         </group>
@@ -477,13 +486,6 @@
             <field name="res_model">interstellar.battle</field>
             <field name="view_mode">tree,form</field>
         </record>
-
-        <!-- TODO ACABAR EL CRON-->
-        <!-- Cron -->
-        <!--        <record model="ir.cron" forcecreate="True" id="interstellar.player_cron">-->
-        <!--            <field name="name">Player Cron</field>-->
-        <!--            <field name="model_id" ref="model_res_partner"/>-->
-        <!--        </record>-->
 
         <!-- server action to the one above -->
         <!--

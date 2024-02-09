@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="wizard_buy_spaceship_form">
+            <field name="name">wizard buy spaceship form</field>
+            <field name="model">interstellar.buy_spaceship</field>
+            <field name="arch" type="xml">
+                <form>
+                     <sheet>
+                        <group>
+                            <group>
+                                <field name="spaceship"/>
+                            </group>
+                            <group col="3">
+                                <group>
+                                    <field name="spaceship_level"/>
+                                </group>
+                                <group>
+                                    <field name="actual_weight"/>
+                                </group>
+                                <group>
+                                    <field name="max_weight"/>
+                                </group>
+
+                            </group>
+                            <field name="weapons"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="buy_spaceship" type="object" string="Comprar"
+                                class="oe_highlight"/>
+                        or
+                        <button name="cancel" string="Cancel" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="action_buy_spaceship">
+            <field name="name">Wizard comprar nave</field>
+            <field name="res_model">interstellar.buy_spaceship</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_buy_spaceship_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
