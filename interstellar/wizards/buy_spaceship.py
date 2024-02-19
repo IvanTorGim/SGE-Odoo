@@ -7,9 +7,8 @@ from odoo.exceptions import ValidationError
 class buy_spaceship(models.TransientModel):
     _name = 'interstellar.buy_spaceship'
 
-    actual_weight = fields.Integer(string='Peso actual', compute='_get_actual_weight')
+    actual_weight = fields.Integer(string='Peso actual', compute="_get_actual_weight")
     max_weight = fields.Integer(string='Peso max', related='spaceship.max_weight')
-    total_weapons = fields.Integer(string='Total armas', compute='_get_total_weapons')
     spaceship_level = fields.Integer(string='Nivel nave', related='spaceship.level')
 
     # Relaciones
@@ -20,6 +19,7 @@ class buy_spaceship(models.TransientModel):
     weapons = fields.Many2many(string='Armas',
                                comodel_name='interstellar.weapon')
 
+    # Función que me crea la nave en el planeta donde se inicia la compra
     def buy_spaceship(self):
         self.env['interstellar.planet_spaceship'].create({
             'planet': self.planet.id,
@@ -28,18 +28,18 @@ class buy_spaceship(models.TransientModel):
         })
 
     # OnChange para que me calcule el peso actual
-    @api.onchange('spaceship')
-    def _onchange_spaceship(self):
-        self.actual_weight = self.spaceship.weight
-
-    # Función para calcular el peso actual de la nave
-    @api.depends('weapons')
+    @api.depends('spaceship', 'weapons')
     def _get_actual_weight(self):
+        self.actual_weight = self.spaceship.weight
         for planet_spaceship in self:
-            total_weight = planet_spaceship.spaceship.weight
             for weapon in planet_spaceship.weapons:
-                total_weight += weapon.weight
-            planet_spaceship.actual_weight = total_weight
+                self.actual_weight += weapon.weight
+
+    # Restricción para que elija una nave
+    @api.constrains('spaceship')
+    def _check_spaceship(self):
+        if self.spaceship.id <= 0:
+            raise ValidationError("Elige una nave")
 
     # Restricción para que no puedan añadir armas si supera el peso máximo
     @api.constrains('weapons')

@@ -193,7 +193,7 @@
             <field name="name">interstellar planet_spaceship list</field>
             <field name="model">interstellar.planet_spaceship</field>
             <field name="arch" type="xml">
-                <tree create="0" delete="0" decoration-warning="spaceship_level&lt;2">
+                <tree create="0" delete="0" decoration-info="spaceship_level&lt;2">
                     <field name="spaceship"/>
                     <field name="actual_weight"/>
                     <field name="max_weight"/>
@@ -350,40 +350,37 @@
                     <header>
                         <button type="object" class="btn" name="start_battle" string="Empezar batalla"
                                 attrs="{'invisible': [('battle_state', '!=', 'preparation')]}"/>
-                        <button type="object" class="btn" name="view_player_one" string="Jugador 1"
-                                attrs="{'invisible': [('battle_state', '=', 'preparation')]}"/>
-                        <button type="object" class="btn" name="view_player_two" string="Jugador 2"
-                                attrs="{'invisible': [('battle_state', '=', 'preparation')]}"/>
+                        <button type="object" class="btn" name="view_player_one" string="Jugador 1"/>
+                        <button type="object" class="btn" name="view_player_two" string="Jugador 2"/>
                     </header>
                     <sheet>
                         <group>
                             <field name="name"/>
                             <field name="battle_state"/>
+                            <field name="winner"/>
                         </group>
-                        <group>
+                        <group col="2">
                             <group>
                                 <separator string="Jugador 1"/>
-                                <group>
-                                    <field name="player_one"/>
-                                    <separator string="Estadisticas"/>
-                                    <field name="attack_one"/>
-                                    <field name="defense_one"/>
-                                    <field name="health_one"/>
-                                    <field name="planet_names_one"/>
-                                </group>
+                                <field name="player_one"/>
+                                <field name="planet_one"/>
+                                <separator string="Estadisticas"/>
+                                <field name="attack_one"/>
+                                <field name="defense_one"/>
+                                <field name="health_one"/>
                             </group>
                             <group>
                                 <separator string="Jugador 2"/>
-                                <group>
-                                    <field name="player_two"/>
-                                    <separator string="Estadisticas"/>
-                                    <field name="attack_two"/>
-                                    <field name="defense_two"/>
-                                    <field name="health_two"/>
-                                    <field name="planet_names_two"/>
-                                </group>
+                                <field name="player_two"/>
+                                <field name="planet_two"/>
+                                <separator string="Estadisticas"/>
+                                <field name="attack_two"/>
+                                <field name="defense_two"/>
+                                <field name="health_two"/>
                             </group>
                         </group>
+                        <separator string="Registro de la batalla"/>
+                        <field name="battle_record"/>
                     </sheet>
                 </form>
             </field>
@@ -422,6 +419,22 @@
                         <field name="planets"/>
                     </sheet>
                 </form>
+            </field>
+        </record>
+
+        <!-- battle record -->
+        <record model="ir.ui.view" id="interstellar.battle_record_tree">
+            <field name="name">interstellar battle record list</field>
+            <field name="model">interstellar.battle_record</field>
+            <field name="arch" type="xml">
+                <tree create="0" edit="0" delete="0">
+                    <field name="turn"/>
+                    <field name="attacker_name"/>
+                    <field name="attacker_health"/>
+                    <field name="attacker_damage"/>
+                    <field name="defensor_name"/>
+                    <field name="defensor_health"/>
+                </tree>
             </field>
         </record>
 
@@ -486,6 +499,14 @@
             <field name="res_model">interstellar.battle</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+        <!-- battle record -->
+        <record model="ir.actions.act_window" id="interstellar.action_battle_record_window">
+            <field name="name">Registros de Batalla</field>
+            <field name="res_model">interstellar.battle_record</field>
+            <field name="view_mode">tree</field>
+        </record>
+
 
         <!-- server action to the one above -->
         <!--
